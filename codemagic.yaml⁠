@@ -1,2 +1,19 @@
 workflows:
-sample-workflow:
+ios-workflow:
+name: iOS workflow
+max_build_duration: 60
+instance_type: mac_mini_m1
+integrations:
+app_store_connect: MyConnect
+environment:
+xcode: latest
+cocoapods: default
+scripts:
+- name: Install Pods
+script: pod install
+- name: Build ipa
+script: xcodebuild -workspace SensiJavier.xcworkspace -scheme SensiJavier -sdk iphoneos -configuration Release -destination 'generic/platform=ios' ARCHS="arm64" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED="NO" VALIDATE_PRODUCT=YES archive -archivePath SensiJavier.xcarchive
+- name: Export ipa
+script: xcodebuild -exportArchive -archivePath SensiJavier.xcarchive -exportOptionsPlist exportOptions.plist -exportPath .
+artifacts:
+- '*.ipa'
